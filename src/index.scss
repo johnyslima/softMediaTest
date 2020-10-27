@@ -15,12 +15,6 @@ code {
     monospace;
 }
 
-.form-check-label {
-  input {
-    color: black;
-  }
-}
-
 .custom-control-label:before {
   background-color: darkorange;
 }
@@ -35,30 +29,77 @@ code {
   }
 }
 
-.zxc { 
-  color: red;
-  background-color: red;
-}
-
-.custom-control-input {
-  color: red;
-  background-color: red;
-}
-
 .btn-secondary {
+  margin-left: 5px;
   color: black;
   background-color:#fff;
-    border-color: #fff;
+  border-color: #fff;
 
-    &:hover,
-    &:active,
-    &:focus {
-      background-color:#fff;
-      border-color: #fff;
-      color: black;
-    }
+  &:hover {
+    border-color: #fff;
+    background-color:#fff;
+    color: #5e6cab;
+  }
 }
 
-.icon-i {
+.btn-secondary:not(:disabled):not(.disabled):active,
+.btn-secondary:not(:disabled):not(.disabled):active:focus
+.btn-secondary:not(:disabled):not(.disabled):hover,
+.btn-secondary:not(:disabled):not(.disabled):focus {
+  background-color:#fff;
+      border-color: #fff;
+      color: black;
+      box-shadow: none;
+}
 
+// .btn-secondary:not(:disabled):not(.disabled):active:focus, 
+// .btn-secondary:not(:disabled):not(.disabled).active:focus, 
+// .show > .btn-secondary.dropdown-toggle:focus {
+
+// }
+.btn-circle {
+  width: 70px;
+  height: 70px;
+  border-radius: 35px;
+  text-align: center;
+  padding-left: 0;
+  padding-right: 0;
+  font-size: 16px;
+  white-space: normal; /* восстанавливаем свойству значение по умолчанию */
+}
+
+.tooltip {
+  left: 115px !important;
+  top: 5px !important;
+
+  .tooltip-inner{
+    background-color: #5e6cab;
+    text-align: justify;
+    padding: 20px 15px;
+    width: 100%;
+    max-width: 250px;
+  }  
+}
+
+.bs-tooltip-auto[x-placement^="bottom"] .arrow::before {
+  border-bottom-color: #5e6cab;
+  border-width: 0 0.4rem 1.2rem;
+  right: 115px;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.input-sum {
+  border-radius: 35px;
+  padding: 5px 15px;
+  border-color: #aaa;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.result-block {
+  background-color: sandybrown;
+  padding: 25px;
 }

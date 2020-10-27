@@ -1,26 +1,67 @@
-import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.css';
-import { Container, Button, Form, FormGroup, Label, Input, FormText, Col, CustomInput } from 'reactstrap';
-import { Field, reduxForm } from 'redux-form';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCoffee, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
-import './index.scss';
+import React, { useState } from "react";
+import "bootstrap/dist/css/bootstrap.css";
+import {
+  Container,
+  Button,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  FormText,
+  Col,
+  CustomInput,
+  UncontrolledTooltip,
+  Tooltip,
+} from "reactstrap";
+import { Field, reduxForm } from "redux-form";
+import { useSelector } from "react-redux";
+import {
+  InfoIcon,
+  XCircleIcon,
+} from "@primer/octicons-react";
+import "./index.scss";
 
-const App = props => {
+const TYPES_PAYMENT = {
+  MONTH: 0,
+  MROT: 1,
+  DAY: 2,
+  HOUR: 3
+}
 
+const App = (props) => {
   const renderSwitch = (field) => (
     <div className="input-row qwe">
-      <Label for="switch-qwe" className="asd">Switches</Label>
+      <Label for="switch-qwe" className="asd">
+        Указать с НДФЛ
+      </Label>
       <CustomInput
-              type="switch"
-              id="switch-qwe"
-              name="qwe"
-              label="Без НДФЛ" 
-              {...field.input} />
-      {field.meta.touched && field.meta.error &&
-        <span className="error">{field.meta.error}</span>}
+        type="switch"
+        id="switch-qwe"
+        name="qwe"
+        label="Без НДФЛ"
+        {...field.input}
+      />
+      {field.meta.touched && field.meta.error && (
+        <span className="error">{field.meta.error}</span>
+      )}
     </div>
-  )
+  );
+
+  const renderInput = (field) => (
+    <div className="input-row qwe">
+      <Input
+        type="text"
+        name="sum"
+        id="sum"
+        className="input-sum"
+        placeholder="Введите сумму"
+        {...field.input}
+      />
+      {field.meta.touched && field.meta.error && (
+        <span className="error">{field.meta.error}</span>
+      )}
+    </div>
+  );
 
   // const renderRadio = (field) => (
   //   <div className="input-row">
@@ -31,82 +72,128 @@ const App = props => {
   //   </div>
   // )
 
-  const [state, setstate] = useState()
-  const { handleSubmit, pristine, reset, submitting } = props;
+  const [mrotModeOn, setMrotModeOn] = useState(false);
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const values = useSelector((state) => state.form.simple?.values)
+  console.log(values)
+  // const [sumType, setSumType] = useState("MROT")
+
+  const toggle = (v) => {
+    setTooltipOpen(!tooltipOpen);
+  };
+  const { handleSubmit, submitting } = props;
   return (
-    <Container>
-    <Form onSubmit={handleSubmit}>
-      <FormGroup row>
-        <legend className="col-form-label">Сумма</legend>
-        <Col sm={4}>
-          <FormGroup check>
-            <Label check>
-              <Field component="input" type="radio" name="sumType" value="forMonth" />{' '}
-              Оплата за месяц
-            </Label>
-          </FormGroup>
-          <FormGroup check>
-            <Label check>
-            <Field component="input" type="radio" name="sumType" value="mrot" />{' '}
-              МРОТ
-            </Label>
-            {/* <Button color="link">link</Button> */}
-            <Button aria-label="Cancel">
-            <FontAwesomeIcon icon={faInfoCircle} />
-            </Button>
-          </FormGroup>
-          <FormGroup check>
-            <Label check>
-            <Field component="input" type="radio" name="sumType" value="forDay" />{' '}
-              Оплата за день
-            </Label>
-          </FormGroup>
-          <FormGroup check>
-            <Label check>
-            <Field component="input" type="radio" name="sumType" value="forHour" />{' '}
-              Оплата за час
-            </Label>
-          </FormGroup>
-        </Col>
-      </FormGroup>
-      {/* <FormGroup>
-        <Label for="exampleCheckbox">Switches</Label>
+    <>
+      <Container>
         <div>
-        <Field
-            name="employed"
-            id="employed"
-            component={() => <CustomInput
-              type="switch"
-              id="exampleCustomSwitch"
-              name="customSwitch"
-              label="Без НДФЛ" />
-            } 
-            type="checkbox"
-          />
-          
+          <Form onSubmit={handleSubmit} initialValues={{sumType: "month"}}>
+            <FormGroup row>
+              <legend
+                className={`col-form-label ${mrotModeOn ? "hidden" : ""}`}
+              >
+                Сумма
+              </legend>
+              <Col sm={4}>
+                <FormGroup check className={mrotModeOn && "hidden"}>
+                  <Label check>
+                    <Field
+                      component="input"
+                      type="radio"
+                      name="sumType"
+                      value="month"
+                    />{" "}
+                    Оплата за месяц
+                  </Label>
+                </FormGroup>
+
+                <FormGroup check>
+                  <Label check>
+                    <Field
+                      component="input"
+                      className={mrotModeOn && "hidden"}
+                      type="radio"
+                      name="sumType"
+                      value="mrot"
+                    />{" "}
+                    МРОТ
+                  </Label>
+                  <Button
+                    aria-label="Cancel"
+                    id="mrotMode"
+                    onClick={() => setMrotModeOn(!mrotModeOn)}
+                  >
+                    <UncontrolledTooltip
+                      placement="bottom"
+                      isOpen={mrotModeOn ? mrotModeOn : tooltipOpen}
+                      target="mrotMode"
+                      toggle={toggle}
+                    >
+                      МРОТ - минимальный размер оплаты труда. Разный для разных
+                      регионов
+                    </UncontrolledTooltip>
+                    {mrotModeOn ? (
+                      <XCircleIcon size={22} />
+                    ) : (
+                      <InfoIcon size={22} />
+                    )}
+                  </Button>
+                </FormGroup>
+
+                <FormGroup check className={mrotModeOn && "hidden"}>
+                  <Label check>
+                    <Field
+                      component="input"
+                      type="radio"
+                      name="sumType"
+                      value="day"
+                    />{" "}
+                    Оплата за день
+                  </Label>
+                </FormGroup>
+
+                <FormGroup check className={mrotModeOn && "hidden"}>
+                  <Label check>
+                    <Field
+                      component="input"
+                      type="radio"
+                      name="sumType"
+                      value="hour"
+                    />{" "}
+                    Оплата за час
+                  </Label>
+                </FormGroup>
+              </Col>
+            </FormGroup>
+
+            <FormGroup className={mrotModeOn && "hidden"}>
+              <Field name="myField" component={renderSwitch} />
+            </FormGroup>
+
+            <FormGroup row className={mrotModeOn && "hidden"}>
+              <Col sm={4}>
+                <Field
+                  name="sum"
+                  component={renderInput}
+                  className="input-sum"
+                  type="text"
+                />
+              </Col>
+            </FormGroup>
+          </Form>
+          <Col sm={5} className={mrotModeOn && "hidden"}>
+            <div className="result-block">
+              <p>40 000Р сотрудник будет получать на руки</p>
+              <p>5977Р НФДЛ, 13% от оклада</p>
+              <p>45 000Р за сотрудника в месяц</p>
+            </div>
+          </Col>
         </div>
-      </FormGroup> */}
-      <FormGroup>
-          <Field name="myField" component={renderSwitch}/>
-      </FormGroup>
-      <FormGroup row>
-        <Col>
-        <Field
-            name="firstName"
-            component="input"
-            type="text"
-            placeholder="First Name"
-          />
-        </Col>
-      </FormGroup>
-        <div>
-          <Button color='primary' type='submit' disabled={submitting}>Sign Up</Button>
-        </div>
-      </Form>
       </Container>
+    </>
   );
 };
 
 export default reduxForm({
-  form: 'simple',
+  form: "simple",
+  enableReinitialize : true 
 })(App);
